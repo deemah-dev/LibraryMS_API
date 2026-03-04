@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Library.API/Library.API.csproj" />
+  <Project Path="Library.BLL.Tests/Library.BLL.Tests.csproj" Id="1efde462-ae19-4d27-a8f0-5ef83fad9c6e" />
   <Project Path="Library.BLL/Library.BLL.csproj" />
   <Project Path="Library.Core/Library.Core.csproj" />
   <Project Path="Library.DAL/Library.DAL.csproj" />
