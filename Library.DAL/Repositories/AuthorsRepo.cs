@@ -12,7 +12,7 @@ namespace Library.DAL.Repositories
             string storedProcedureName = "SP_InsertAuthor";
             SqlParameter nameParameter = new SqlParameter("@Name", SqlDbType.NVarChar) { Value = author.Name };
 
-            return CommonRepos.ReturnValue(storedProcedureName, nameParameter);
+            return CommonRepos.ReturnValue_int(storedProcedureName, nameParameter);
         }
 
         public bool UpdateAuthor(Author author)

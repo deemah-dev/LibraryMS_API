@@ -23,7 +23,7 @@ namespace Library.BLL.Services
             return borrowingRepo.ReturnBook(borrowingRecordId, userId, actualReturnDate);
         }
 
-        public bool HasLateFine(int borrowingRecordId, DateTime actualReturnDate)
+        public decimal HasLateFine(int borrowingRecordId, DateTime actualReturnDate)
         {
             return borrowingRepo.CheckBorrowFine(borrowingRecordId, actualReturnDate);
         }

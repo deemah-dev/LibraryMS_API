@@ -6,7 +6,7 @@ namespace Library.DAL.Interfaces
     {
         int InsertBorrowingRecord(BorrowingRecord borrowingRecord);
         bool ReturnBook(int borrowingRecordId, int userId, DateTime actualReturnDate);
-        bool CheckBorrowFine(int borrowingRecordId, DateTime actualReturnDate);
+        decimal CheckBorrowFine(int borrowingRecordId, DateTime actualReturnDate);
         IEnumerable<BorrowingRecord>? GetBorrowingRecords();
     }
 }

@@ -107,7 +107,7 @@ namespace Library.DAL.Repositories
 
             }
         }
-        internal static int ReturnValue(string storedProcedureName, params SqlParameter[] parameters)
+        internal static int ReturnValue_int(string storedProcedureName, params SqlParameter[] parameters)
         {
             using (SqlConnection connection = new SqlConnection(DbHelper.ConnectionString))
             {
@@ -145,9 +145,47 @@ namespace Library.DAL.Repositories
                 }
             }
         }
+        internal static decimal ReturnValue_dec(string storedProcedureName, params SqlParameter[] parameters)
+        {
+            using (SqlConnection connection = new SqlConnection(DbHelper.ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand { CommandText = storedProcedureName, Connection = connection, CommandType = CommandType.StoredProcedure })
+                {
+                    foreach (var parameter in parameters)
+                    {
+                        command.Parameters.Add(parameter);
+                    }
+                    SqlParameter returnParameter = new SqlParameter
+                    {
+                        ParameterName = "@ReturnValue",
+                        SqlDbType = SqlDbType.Decimal,
+                        Direction = ParameterDirection.ReturnValue
+                    };
+                    command.Parameters.Add(returnParameter);
+
+                    decimal returnedValue = -1;
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+
+                        returnedValue = (decimal)returnParameter.Value;
+                    }
+                    catch (Exception)
+                    {
+                        //string sourceName = "OnlineStoreManagementSystemApplication";
+                        //if (!EventLog.SourceExists(sourceName))
+                        //{
+                        //    EventLog.CreateEventSource(sourceName, "Application");
+                        //}
+                    }
+                    return returnedValue;
+                }
+            }
+        }
         internal static int ReturnValue(string storedProcedureName)
         {
-            return ReturnValue(storedProcedureName, new SqlParameter[0]);
+            return ReturnValue_int(storedProcedureName, new SqlParameter[0]);
         }
     }
 }

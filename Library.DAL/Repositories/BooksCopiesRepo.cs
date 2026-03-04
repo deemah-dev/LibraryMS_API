@@ -12,7 +12,7 @@ namespace Library.DAL.Repositories
             string storedProcedureName = "SP_InsertBookCopy";
             SqlParameter bookIdParameter = new SqlParameter("@BookId", SqlDbType.Int) { Value = copy.BookId };
 
-            return CommonRepos.ReturnValue(storedProcedureName, bookIdParameter);
+            return CommonRepos.ReturnValue_int(storedProcedureName, bookIdParameter);
         }
 
         public bool DeleteBookCopy(int copyId)

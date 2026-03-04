@@ -14,7 +14,7 @@ namespace Library.DAL.Repositories
             SqlParameter passwordHashParameter = new SqlParameter("@PasswordHash", SqlDbType.NVarChar) { Value = user.PasswordHash };
             SqlParameter roleIdParameter = new SqlParameter("@RoleId", SqlDbType.Int) { Value = user.RoleId };
 
-            return CommonRepos.ReturnValue(storedProcedureName, usernameParameter, passwordHashParameter, roleIdParameter);
+            return CommonRepos.ReturnValue_int(storedProcedureName, usernameParameter, passwordHashParameter, roleIdParameter);
         }
 
         public bool UpdateUser(User user)

@@ -14,7 +14,7 @@ namespace Library.DAL.Repositories
             SqlParameter copyIdParameter = new SqlParameter("@CopyId", SqlDbType.Int) { Value = borrowingRecord.CopyId };
             SqlParameter borrowingDateParameter = new SqlParameter("@BorrowingDate", SqlDbType.Date) { Value = borrowingRecord.BorrowingDate };
 
-            return CommonRepos.ReturnValue(storedProcedureName, userIdParameter, copyIdParameter, borrowingDateParameter);
+            return CommonRepos.ReturnValue_int(storedProcedureName, userIdParameter, copyIdParameter, borrowingDateParameter);
         }
 
         public bool ReturnBook(int borrowingRecordId, int userId, DateTime actualReturnDate)
@@ -27,13 +27,13 @@ namespace Library.DAL.Repositories
             return CommonRepos.ExecuteNonQuery(storedProcedureName, borrowingRecordIdParameter, userIdParameter, actualReturnDateParameter);
         }
 
-        public bool CheckBorrowFine(int borrowingRecordId, DateTime actualReturnDate)
+        public decimal CheckBorrowFine(int borrowingRecordId, DateTime actualReturnDate)
         {
             string storedProcedureName = "SP_CheckBorrowFine";
             SqlParameter borrowingRecordIdParameter = new SqlParameter("@BorrowingRecordId", SqlDbType.Int) { Value = borrowingRecordId };
             SqlParameter actualReturnDateParameter = new SqlParameter("@ActualReturnDate", SqlDbType.Date) { Value = actualReturnDate };
 
-            return CommonRepos.CheckTruefalse(storedProcedureName, borrowingRecordIdParameter, actualReturnDateParameter);
+            return CommonRepos.ReturnValue_dec(storedProcedureName, borrowingRecordIdParameter, actualReturnDateParameter);
         }
 
         public IEnumerable<BorrowingRecord>? GetBorrowingRecords()

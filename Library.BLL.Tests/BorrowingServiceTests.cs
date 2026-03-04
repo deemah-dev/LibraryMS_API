@@ -68,34 +68,34 @@ namespace Library.BLL.Tests
 
         //HasLateFine
         [Fact]
-        public void HasLateFine_WhenFineExists_ReturnsTrue()
+        public void HasLateFine_WhenFineExists_ReturnsFine()
         {
             Mock<IBorrowingRepo> mockRepo = new();
 
             DateTime actualReturnDate = DateTime.Now.AddDays(5);
-            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(true);
+            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(25);
 
             BorrowingService service = new(mockRepo.Object);
 
             var result = service.HasLateFine(1, actualReturnDate);
 
-            Assert.True(result);
+            Assert.Equal(25, result);
             mockRepo.Verify(repo => repo.CheckBorrowFine(1, actualReturnDate), Times.Once);
         }
 
         [Fact]
-        public void HasLateFine_WhenNoFine_ReturnsFalse()
+        public void HasLateFine_WhenNoFine_ReturnsNegativeOne()
         {
             Mock<IBorrowingRepo> mockRepo = new();
 
             DateTime actualReturnDate = DateTime.Now;
-            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(false);
+            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(-1);
 
             BorrowingService service = new(mockRepo.Object);
 
             var result = service.HasLateFine(1, actualReturnDate);
 
-            Assert.False(result);
+            Assert.Equal(-1, result);
             mockRepo.Verify(repo => repo.CheckBorrowFine(1, actualReturnDate), Times.Once);
         }
 

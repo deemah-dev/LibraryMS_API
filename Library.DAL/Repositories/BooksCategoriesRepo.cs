@@ -12,7 +12,7 @@ namespace Library.DAL.Repositories
             string storedProcedureName = "SP_InsertBooksCategory";
             SqlParameter nameParameter = new SqlParameter("@Name", SqlDbType.NVarChar) { Value = category.Name };
 
-            return CommonRepos.ReturnValue(storedProcedureName, nameParameter);
+            return CommonRepos.ReturnValue_int(storedProcedureName, nameParameter);
         }
 
         public bool UpdateBooksCategory(BookCategory category)

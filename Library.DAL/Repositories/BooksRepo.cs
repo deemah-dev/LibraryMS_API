@@ -18,7 +18,7 @@ namespace Library.DAL.Repositories
             SqlParameter publicationDateParameter = new SqlParameter("@PublicationDate", SqlDbType.Date) { Value = book.PublicationDate ?? (object)DBNull.Value };
             SqlParameter additionalDetailsParameter = new SqlParameter("@AdditionalDetails", SqlDbType.NVarChar) { Value = book.AdditionalDetails ?? (object)DBNull.Value };
 
-            return CommonRepos.ReturnValue(storedProcedureName, titleParameter, subTitleParameter, authorIdParameter, isbnParameter, categoryIdParameter, publicationDateParameter, additionalDetailsParameter);
+            return CommonRepos.ReturnValue_int(storedProcedureName, titleParameter, subTitleParameter, authorIdParameter, isbnParameter, categoryIdParameter, publicationDateParameter, additionalDetailsParameter);
         }
 
         public bool UpdateBook(Book book)

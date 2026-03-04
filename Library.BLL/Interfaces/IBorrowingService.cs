@@ -6,7 +6,7 @@ namespace Library.BLL.Interfaces
     {
         int BorrowBook(BorrowingRecord borrowingRecord);
         bool ReturnBook(int borrowingRecordId, int userId, DateTime actualReturnDate);
-        bool HasLateFine(int borrowingRecordId, DateTime actualReturnDate);
+        decimal HasLateFine(int borrowingRecordId, DateTime actualReturnDate);
         IEnumerable<BorrowingRecord>? GetAllBorrowingRecords();
     }
 }
