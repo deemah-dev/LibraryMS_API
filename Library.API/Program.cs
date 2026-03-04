@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Threading.RateLimiting;
+using Library.BLL.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +27,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
             ValidateIssuerSigningKey = true,
 
-            ValidIssuer = "StudentApi",
+            ValidIssuer = "Library.API",
 
-            ValidAudience = "StudentApiUsers",
+            ValidAudience = "AuthService",
 
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(secretKey))
@@ -104,14 +105,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-//builder.Services.AddScoped<IStudentService, StudentService>();
-//builder.Services.AddScoped<IStudentsRepo, StudentsRepo>();
-
-//builder.Services.AddScoped<IAuthService, AuthService>();
-//builder.Services.AddScoped<IUserRepo, UserRepo>();
-
-//builder.Services.AddScoped<IRoleService, RoleService>();
-//builder.Services.AddScoped<IRoleRepo, RoleRepo>();
+builder.Services.AddBusinessServices();
 
 builder.Services.AddCors(options =>
 {
