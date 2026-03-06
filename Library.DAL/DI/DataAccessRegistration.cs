@@ -16,6 +16,7 @@ namespace Library.DAL.DI
             services.AddScoped<IFinesRepo, FinesRepo>();
             services.AddScoped<IUsersRepo, UsersRepo>();
             services.AddScoped<ISettingsRepo, SettingsRepo>();
+            services.AddScoped<IRefreshTokensRepo, RefreshTokensRepo>();
             return services;
         }
     }

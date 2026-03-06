@@ -20,6 +20,7 @@ namespace Library.BLL.DI
             services.AddScoped<IFinesService, FinesService>();
             services.AddScoped<IAuthorsService, AuthorsService>();
             services.AddScoped<ISettingsService, SettingsService>();
+            services.AddScoped<IRefreshTokensService, RefreshTokensService>();
             return services;
         }
     }
