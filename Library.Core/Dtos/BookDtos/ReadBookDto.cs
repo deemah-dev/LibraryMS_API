@@ -1,17 +1,15 @@
-﻿namespace Library.Core.Models
+﻿using Library.Core.Models;
+
+namespace Library.Core.Dtos.BookDtos
 {
-    public class Book
+    public class ReadBookDto
     {
         public int BookId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string? SubTitle { get; set; }
-        public int AuthorId { get; set; }
         public string ISBN { get; set; } = string.Empty;
-        public int CategoryId { get; set; }
         public DateTime? PublicationDate { get; set; }
         public string? AdditionalDetails { get; set; }
-
-        // Navigation properties
         public BookCategory? Category { get; set; }
         public Author? Author { get; set; }
     }

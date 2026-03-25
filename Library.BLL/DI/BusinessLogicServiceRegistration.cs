@@ -1,4 +1,5 @@
-﻿using Library.BLL.Interfaces;
+﻿using Library.BLL.AutoMapper;
+using Library.BLL.Interfaces;
 using Library.BLL.Services;
 using Library.DAL.DI;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,17 @@ namespace Library.BLL.DI
             services.AddScoped<IAuthorsService, AuthorsService>();
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<IRefreshTokensService, RefreshTokensService>();
+
+            services.AddAutoMappers();
+
+            return services;
+        }
+        public static IServiceCollection AddAutoMappers(this IServiceCollection services)
+        {
+            services.AddAutoMapper(map => map.AddProfile(new BookAutoMapper()));
+            services.AddAutoMapper(map => map.AddProfile(new BookCopyAutoMapper()));
+            services.AddAutoMapper(map => map.AddProfile(new BorrowingAutoMapper()));
+            services.AddAutoMapper(map => map.AddProfile(new FineAutoMapper()));
             return services;
         }
     }

@@ -1,12 +1,14 @@
-﻿using Library.Core.Models;
+﻿using Library.Core.Dtos.BorrowingBookDtos;
+using Library.Core.Models;
 
 namespace Library.BLL.Interfaces
 {
     public interface IBorrowingService
     {
-        int BorrowBook(BorrowingRecord borrowingRecord);
-        bool ReturnBook(int borrowingRecordId, int userId, DateTime actualReturnDate);
+        int BorrowBook(BorrowBookDto borrowingRecord);
+        bool ReturnBook(ReturnBookDto returnBook);
         decimal HasLateFine(int borrowingRecordId, DateTime actualReturnDate);
-        IEnumerable<BorrowingRecord>? GetAllBorrowingRecords();
+        ReadBorrowingRecordDto? GetBorrowingRecord(int borrowingRecordId);
+        IEnumerable<ReadBorrowingRecordDto>? GetAllBorrowingRecords();
     }
 }

@@ -62,5 +62,23 @@ namespace Library.DAL.Repositories
             }
             return null;
         }
+
+        public Author? GetAuthorById(int authorId)
+        {
+            string storedProcedureName = "SP_GetAuthorById";
+            SqlParameter authorIdParameter = new SqlParameter("@AuthorId", SqlDbType.Int) { Value = authorId };
+
+            DataTable? dataTable = CommonRepos.GetAll(storedProcedureName, authorIdParameter);
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                DataRow row = dataTable.Rows[0];
+                return new Author
+                {
+                    AuthorId = (int)row["AuthorId"],
+                    Name = (string)row["Name"]
+                };
+            }
+            return null;
+        }
     }
 }

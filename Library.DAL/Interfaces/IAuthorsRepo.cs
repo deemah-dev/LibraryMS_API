@@ -8,5 +8,6 @@ namespace Library.DAL.Interfaces
         bool UpdateAuthor(Author author);
         Author? GetAuthorByName(string name);
         IEnumerable<Author>? GetAuthors();
+        Author? GetAuthorById(int authorId);
     }
 }

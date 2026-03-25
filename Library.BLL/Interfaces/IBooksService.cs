@@ -1,13 +1,14 @@
-﻿using Library.Core.Models;
+﻿using Library.Core.Dtos.BookDtos;
+using Library.Core.Models;
 
 namespace Library.BLL.Interfaces
 {
     public interface IBooksService
     {
-        int AddBook(Book book);
-        bool UpdateBook(Book book);
+        int AddBook(AddBookDTO book);
+        bool UpdateBook(int bookId, UpdateBookDto book);
         bool RemoveBook(int bookId);
-        Book? GetBook(int bookId);
-        IEnumerable<Book>? GetAllBooks();
+        ReadBookDto? GetBook(int bookId);
+        IEnumerable<ReadBookDto>? GetAllBooks();
     }
 }

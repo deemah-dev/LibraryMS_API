@@ -32,5 +32,10 @@ namespace Library.BLL.Services
         {
             return authorsRepo.GetAuthors();
         }
+
+        public Author? GetAuthor(int authorId)
+        {
+            return authorsRepo.GetAuthorById(authorId);
+        }
     }
 }

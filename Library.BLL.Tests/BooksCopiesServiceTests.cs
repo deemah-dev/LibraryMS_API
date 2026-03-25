@@ -57,7 +57,7 @@ namespace Library.BLL.Tests
 
             BooksCopiesService service = new(mockRepo.Object);
 
-            var result = service.GetCopyIdByBook(1);
+            var result = service.GetCopyIdByBookId(1);
 
             Assert.NotNull(result);
             Assert.Equal(1, result);
@@ -73,7 +73,7 @@ namespace Library.BLL.Tests
 
             BooksCopiesService service = new(mockRepo.Object);
 
-            var result = service.GetCopyIdByBook(999);
+            var result = service.GetCopyIdByBookId(999);
 
             Assert.Null(result);
             mockRepo.Verify(repo => repo.GetBookCopyId(999), Times.Once);

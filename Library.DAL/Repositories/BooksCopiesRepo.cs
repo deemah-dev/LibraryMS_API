@@ -2,6 +2,7 @@
 using Library.DAL.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Net;
 
 namespace Library.DAL.Repositories
 {
@@ -55,6 +56,25 @@ namespace Library.DAL.Repositories
                     });
                 }
                 return copies;
+            }
+            return null;
+        }
+
+        public BookCopy? GetCopyById(int copyId)
+        {
+            string storedProcedureName = "SP_GetBookCopyById";
+            SqlParameter copyIdParameter = new SqlParameter("@CopyId", SqlDbType.Int) { Value = copyId };
+
+            DataTable? dataTable = CommonRepos.GetAll(storedProcedureName, copyIdParameter);
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                DataRow row = dataTable.Rows[0];
+                return new BookCopy
+                {
+                    CopyId = (int)row["CopyId"],
+                    BookId = (int)row["BookId"],
+                    IsAvailable = (bool)row["IsAvailable"]
+                };
             }
             return null;
         }

@@ -1,6 +1,5 @@
-﻿using Library.API.DTOs.Auth;
-using Library.BLL.Interfaces;
-using Library.BLL.Services;
+﻿using Library.BLL.Interfaces;
+using Library.Core.Dtos.AuthDtos;
 using Library.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -86,7 +85,7 @@ namespace Library.API.Controllers
             };
             refreshTokensService.AddRefreshToken(refreshToken);
 
-            TokenResponse tokenResponse = new() { AccessToken = accessTokenString, RefreshToken = refreshTokenString };
+            TokenResponseDto tokenResponse = new() { AccessToken = accessTokenString, RefreshToken = refreshTokenString };
 
             return Ok(tokenResponse);
         }
@@ -95,7 +94,7 @@ namespace Library.API.Controllers
 
         [HttpPost("Login")]
         [EnableRateLimiting("AuthLimiter")]
-        public IActionResult Login(LoginRequest request)
+        public IActionResult Login(LoginRequestDto request)
         {
             User? user = authService.Authenticate(request.Username);
 
@@ -114,39 +113,41 @@ namespace Library.API.Controllers
 
         [HttpPost("RefreshTokens")]
         [EnableRateLimiting("AuthLimiter")]
-        public IActionResult RefreshTokens(RefreshRequest request)
+        public IActionResult RefreshTokens(string refreshToken)
         {
-            string refreshTokenHash = SHA256Hash(request.RefreshToken);
-            RefreshToken? refreshToken = refreshTokensService.GetRefreshToken(refreshTokenHash);
-            if (refreshToken is null)
+            string refreshTokenHash = SHA256Hash(refreshToken);
+            RefreshToken? refreshTokenModel = refreshTokensService.GetRefreshToken(refreshTokenHash);
+            if (refreshTokenModel is null)
                 return Unauthorized("Invalid refresh request");
 
-            if (refreshToken.User is null)
+            if (refreshTokenModel.User is null)
                 return Unauthorized("Invalid refresh request");
 
-            if (DateTime.Compare(refreshToken.ExpirationDate, DateTime.UtcNow) < 0)
+            if (DateTime.Compare(refreshTokenModel.ExpirationDate, DateTime.UtcNow) < 0)
                 return Unauthorized("Refresh token expired");
 
-            if (refreshToken.RevokedAt is not null)
+            if (refreshTokenModel.RevokedAt is not null)
                 return Unauthorized("Refresh token is revoked");
 
-            refreshTokensService.RevokeRefreshToken(refreshToken.RefreshTokenHash, DateTime.UtcNow);
+            refreshTokensService.RevokeRefreshToken(refreshTokenModel.RefreshTokenHash, DateTime.UtcNow);
 
-            return GenerateAccessToken(refreshToken.User);
+            return GenerateAccessToken(refreshTokenModel.User);
         }
 
+        //________________________________________________________________
+
         [HttpPost("Logout")]
-        public IActionResult Logout(LogoutRequest request)
+        public IActionResult Logout(string refreshToken)
         {
-            string refreshTokenHash = SHA256Hash(request.RefreshToken);
-            RefreshToken? refreshToken = refreshTokensService.GetRefreshToken(refreshTokenHash);
-            if (refreshToken is null
-                || refreshToken.RevokedAt is not null
-                || DateTime.Compare(refreshToken.ExpirationDate, DateTime.UtcNow) < 0
-                || refreshToken.User is null)
+            string refreshTokenHash = SHA256Hash(refreshToken);
+            RefreshToken? refreshTokenModel = refreshTokensService.GetRefreshToken(refreshTokenHash);
+            if (refreshTokenModel is null
+                || refreshTokenModel.RevokedAt is not null
+                || DateTime.Compare(refreshTokenModel.ExpirationDate, DateTime.UtcNow) < 0
+                || refreshTokenModel.User is null)
                 return Ok();
 
-            refreshTokensService.RevokeRefreshToken(refreshToken.RefreshTokenHash, DateTime.UtcNow);
+            refreshTokensService.RevokeRefreshToken(refreshTokenModel.RefreshTokenHash, DateTime.UtcNow);
             return Ok("Logged out successfully");
         }
     }

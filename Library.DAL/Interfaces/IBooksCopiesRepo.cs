@@ -8,5 +8,6 @@ namespace Library.DAL.Interfaces
         bool DeleteBookCopy(int copyId);
         int? GetBookCopyId(int bookId);
         IEnumerable<BookCopy>? GetBookCopies();
+        BookCopy? GetCopyById(int copyId);
     }
 }

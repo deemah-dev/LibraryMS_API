@@ -8,5 +8,6 @@ namespace Library.BLL.Interfaces
         bool UpdateAuthor(Author author);
         Author? GetAuthorByName(string name);
         IEnumerable<Author>? GetAllAuthors();
+        Author? GetAuthor(int authorId);
     }
 }

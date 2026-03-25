@@ -5,44 +5,6 @@ namespace Library.DAL.Repositories
 {
     internal static class CommonRepos
     {
-        public static bool CheckTruefalse(string storedProcedureName, params SqlParameter[] parameters)
-        {
-            using (SqlConnection connection = new SqlConnection(DbHelper.ConnectionString))
-            {
-                using (SqlCommand command = new SqlCommand { CommandText = storedProcedureName, Connection = connection, CommandType = CommandType.StoredProcedure })
-                {
-                    foreach (var parameter in parameters)
-                    {
-                        command.Parameters.Add(parameter);
-                    }
-                    SqlParameter returnParameter = new SqlParameter
-                    {
-                        ParameterName = "@ReturnValue",
-                        SqlDbType = SqlDbType.Int,
-                        Direction = ParameterDirection.ReturnValue
-                    };
-                    command.Parameters.Add(returnParameter);
-
-                    bool success = false;
-                    try
-                    {
-                        connection.Open();
-                        command.ExecuteNonQuery();
-
-                        success = (int)returnParameter.Value == 1;
-                    }
-                    catch (Exception)
-                    {
-                        //string sourceName = "OnlineStoreManagementSystemApplication";
-                        //if (!EventLog.SourceExists(sourceName))
-                        //{
-                        //    EventLog.CreateEventSource(sourceName, "Application");
-                        //}
-                    }
-                    return success;
-                }
-            }
-        }
         public static DataTable? GetAll(string storedProcedureName)
         {
             return GetAll(storedProcedureName, new SqlParameter[0]);
@@ -96,11 +58,7 @@ namespace Library.DAL.Repositories
                     }
                     catch (Exception)
                     {
-                        //string sourceName = "OnlineStoreManagementSystemApplication";
-                        //if (!EventLog.SourceExists(sourceName))
-                        //{
-                        //    EventLog.CreateEventSource(sourceName, "Application");
-                        //}
+                        
                     }
                     return success;
                 }
@@ -135,11 +93,7 @@ namespace Library.DAL.Repositories
                     }
                     catch (Exception)
                     {
-                        //string sourceName = "OnlineStoreManagementSystemApplication";
-                        //if (!EventLog.SourceExists(sourceName))
-                        //{
-                        //    EventLog.CreateEventSource(sourceName, "Application");
-                        //}
+                        
                     }
                     return returnedValue;
                 }
@@ -173,19 +127,11 @@ namespace Library.DAL.Repositories
                     }
                     catch (Exception)
                     {
-                        //string sourceName = "OnlineStoreManagementSystemApplication";
-                        //if (!EventLog.SourceExists(sourceName))
-                        //{
-                        //    EventLog.CreateEventSource(sourceName, "Application");
-                        //}
+                        
                     }
                     return returnedValue;
                 }
             }
-        }
-        internal static int ReturnValue(string storedProcedureName)
-        {
-            return ReturnValue_int(storedProcedureName, new SqlParameter[0]);
         }
     }
 }

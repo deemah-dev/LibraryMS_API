@@ -30,10 +30,9 @@ namespace Library.DAL.Repositories
             SqlParameter authorIdParameter = new SqlParameter("@AuthorId", SqlDbType.Int) { Value = book.AuthorId };
             SqlParameter isbnParameter = new SqlParameter("@ISBN", SqlDbType.NVarChar) { Value = book.ISBN ?? (object)DBNull.Value };
             SqlParameter categoryIdParameter = new SqlParameter("@CategoryId", SqlDbType.Int) { Value = book.CategoryId };
-            SqlParameter publicationDateParameter = new SqlParameter("@PublicationDate", SqlDbType.Date) { Value = book.PublicationDate ?? (object)DBNull.Value };
             SqlParameter additionalDetailsParameter = new SqlParameter("@AdditionalDetails", SqlDbType.NVarChar) { Value = book.AdditionalDetails ?? (object)DBNull.Value };
 
-            return CommonRepos.ExecuteNonQuery(storedProcedureName, bookIdParameter, titleParameter, subTitleParameter, authorIdParameter, isbnParameter, categoryIdParameter, publicationDateParameter, additionalDetailsParameter);
+            return CommonRepos.ExecuteNonQuery(storedProcedureName, bookIdParameter, titleParameter, subTitleParameter, authorIdParameter, isbnParameter, categoryIdParameter, additionalDetailsParameter);
         }
 
         public bool DeleteBook(int bookId)
