@@ -15,7 +15,7 @@ namespace Library.BLL.Tests
 
             BorrowingRecord borrowingRecord = new BorrowingRecord
             {
-                UserId = 1,
+                BorrowUserId = 1,
                 CopyId = 1,
                 BorrowingDate = DateTime.Now,
                 DueDate = DateTime.Now.AddDays(14)
@@ -111,7 +111,7 @@ namespace Library.BLL.Tests
                 new BorrowingRecord 
                 { 
                     BorrowingRecordId = 1, 
-                    UserId = 1, 
+                    BorrowUserId = 1, 
                     CopyId = 1, 
                     BorrowingDate = DateTime.Now.AddDays(-7),
                     DueDate = DateTime.Now.AddDays(7)
@@ -119,7 +119,7 @@ namespace Library.BLL.Tests
                 new BorrowingRecord 
                 { 
                     BorrowingRecordId = 2, 
-                    UserId = 2, 
+                    BorrowUserId = 2, 
                     CopyId = 2, 
                     BorrowingDate = DateTime.Now.AddDays(-14),
                     DueDate = DateTime.Now
@@ -127,7 +127,7 @@ namespace Library.BLL.Tests
                 new BorrowingRecord 
                 { 
                     BorrowingRecordId = 3, 
-                    UserId = 1, 
+                    BorrowUserId = 1, 
                     CopyId = 3, 
                     BorrowingDate = DateTime.Now.AddDays(-21),
                     DueDate = DateTime.Now.AddDays(-7),

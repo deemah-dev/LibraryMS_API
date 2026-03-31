@@ -123,7 +123,7 @@ namespace Library.DAL.Repositories
                         connection.Open();
                         command.ExecuteNonQuery();
 
-                        returnedValue = (decimal)returnParameter.Value;
+                        returnedValue = Convert.ToDecimal(returnParameter.Value);
                     }
                     catch (Exception)
                     {

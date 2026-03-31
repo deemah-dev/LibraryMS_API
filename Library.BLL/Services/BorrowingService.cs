@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.BLL.Interfaces;
+using Library.Core.Dtos.BookCopyDtos;
 using Library.Core.Dtos.BorrowingBookDtos;
 using Library.Core.Models;
 using Library.DAL.Interfaces;
@@ -24,7 +25,13 @@ namespace Library.BLL.Services
         public int BorrowBook(BorrowBookDto borrowBook)
         {
             BorrowingRecord borrowingRecordEntity = mapper.Map<BorrowingRecord>(borrowBook);
-            return borrowingRepo.InsertBorrowingRecord(borrowingRecordEntity);
+
+            ReadBookCopyDto? copy = copiesService.GetCopy(borrowingRecordEntity.CopyId);
+            if(copy is not null && copy.IsAvailable)
+                return borrowingRepo.InsertBorrowingRecord(borrowingRecordEntity);
+
+            else
+                return -1;
         }
 
         public bool ReturnBook(ReturnBookDto returnBook)
@@ -51,7 +58,9 @@ namespace Library.BLL.Services
 
             ReadBorrowingRecordDto borrowingRecord = mapper.Map<ReadBorrowingRecordDto>(borrowingRecordEntity);
             borrowingRecord.Copy = copiesService.GetCopy(borrowingRecordEntity.CopyId);
-            borrowingRecord.User = usersService.GetUser(borrowingRecordEntity.UserId);
+            borrowingRecord.BorrowUser = usersService.GetUser(borrowingRecordEntity.BorrowUserId);
+            if(borrowingRecordEntity.ReturnUserId is not null)
+                borrowingRecord.ReturnUser = usersService.GetUser((int)borrowingRecordEntity.ReturnUserId);
             return borrowingRecord;
         }
     }

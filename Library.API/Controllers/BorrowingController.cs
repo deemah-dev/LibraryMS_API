@@ -86,7 +86,7 @@ namespace Library.API.Controllers
 
             decimal fineAmount = borrowingService.HasLateFine(borrowingRecordId, actualReturnDate);
 
-            if (fineAmount == 0)
+            if (fineAmount == -1)
                 return Ok(new { message = "No late fine applicable.", hasLateFine = false, fineAmount, borrowingRecordId });
 
             return Ok(new { message = "Late fine has been calculated.", hasLateFine = true, fineAmount, borrowingRecordId });

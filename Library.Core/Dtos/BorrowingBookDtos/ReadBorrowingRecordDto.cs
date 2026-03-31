@@ -9,8 +9,10 @@ namespace Library.Core.Dtos.BorrowingBookDtos
         public DateTime BorrowingDate { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime? ActualReturnDate { get; set; }
+        public string? Status { get; set; }
 
-        public User? User { get; set; }
+        public User? BorrowUser { get; set; }
+        public User? ReturnUser { get; set; }
         public ReadBookCopyDto? Copy { get; set; }
     }
 }

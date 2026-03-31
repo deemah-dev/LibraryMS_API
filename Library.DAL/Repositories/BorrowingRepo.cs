@@ -10,7 +10,7 @@ namespace Library.DAL.Repositories
         public int InsertBorrowingRecord(BorrowingRecord borrowingRecord)
         {
             string storedProcedureName = "SP_InsertBorrowingRecord";
-            SqlParameter userIdParameter = new SqlParameter("@UserId", SqlDbType.Int) { Value = borrowingRecord.UserId };
+            SqlParameter userIdParameter = new SqlParameter("@UserId", SqlDbType.Int) { Value = borrowingRecord.BorrowUserId };
             SqlParameter copyIdParameter = new SqlParameter("@CopyId", SqlDbType.Int) { Value = borrowingRecord.CopyId };
             SqlParameter borrowingDateParameter = new SqlParameter("@BorrowingDate", SqlDbType.Date) { Value = borrowingRecord.BorrowingDate };
 
@@ -21,7 +21,7 @@ namespace Library.DAL.Repositories
         {
             string storedProcedureName = "SP_ReturnBook";
             SqlParameter borrowingRecordIdParameter = new SqlParameter("@BorrowingRecordId", SqlDbType.Int) { Value = borrowingRecord.BorrowingRecordId};
-            SqlParameter userIdParameter = new SqlParameter("@UserId", SqlDbType.Int) { Value = borrowingRecord.UserId };
+            SqlParameter userIdParameter = new SqlParameter("@UserId", SqlDbType.Int) { Value = borrowingRecord.BorrowUserId };
             SqlParameter actualReturnDateParameter = new SqlParameter("@ActualReturnDate", SqlDbType.Date) { Value = borrowingRecord.ActualReturnDate };
 
             return CommonRepos.ExecuteNonQuery(storedProcedureName, borrowingRecordIdParameter, userIdParameter, actualReturnDateParameter);
@@ -49,11 +49,13 @@ namespace Library.DAL.Repositories
                     records.Add(new BorrowingRecord
                     {
                         BorrowingRecordId = (int)row["BorrowingRecordId"],
-                        UserId = (int)row["UserId"],
+                        BorrowUserId = (int)row["BorrowUserId"],
                         CopyId = (int)row["CopyId"],
                         BorrowingDate = (DateTime)row["BorrowingDate"],
                         DueDate = (DateTime)row["DueDate"],
-                        ActualReturnDate = row["ActualReturnDate"] != DBNull.Value ? (DateTime)row["ActualReturnDate"] : null
+                        ReturnUserId = row["ReturnUserId"] != DBNull.Value ? (int)row["ReturnUserId"] : null,
+                        ActualReturnDate = row["ActualReturnDate"] != DBNull.Value ? (DateTime)row["ActualReturnDate"] : null,
+                        Status = (string)row["Status"]
                     });
                 }
                 return records;
@@ -73,13 +75,15 @@ namespace Library.DAL.Repositories
                 DataRow row = dataTable.Rows[0];
                 return new BorrowingRecord
                     {
-                        BorrowingRecordId = (int)row["BorrowingRecordId"],
-                        UserId = (int)row["UserId"],
-                        CopyId = (int)row["CopyId"],
-                        BorrowingDate = (DateTime)row["BorrowingDate"],
-                        DueDate = (DateTime)row["DueDate"],
-                        ActualReturnDate = row["ActualReturnDate"] != DBNull.Value ? (DateTime)row["ActualReturnDate"] : null
-                    };
+                    BorrowingRecordId = (int)row["BorrowingRecordId"],
+                    BorrowUserId = (int)row["BorrowUserId"],
+                    CopyId = (int)row["CopyId"],
+                    BorrowingDate = (DateTime)row["BorrowingDate"],
+                    DueDate = (DateTime)row["DueDate"],
+                    ReturnUserId = row["ReturnUserId"] != DBNull.Value ? (int)row["ReturnUserId"] : null,
+                    ActualReturnDate = row["ActualReturnDate"] != DBNull.Value ? (DateTime)row["ActualReturnDate"] : null,
+                    Status = (string)row["Status"]
+                };
             }
             return null;
         }

@@ -32,7 +32,6 @@ namespace Library.BLL.DI
             services.AddAutoMapper(map => map.AddProfile(new BookAutoMapper()));
             services.AddAutoMapper(map => map.AddProfile(new BookCopyAutoMapper()));
             services.AddAutoMapper(map => map.AddProfile(new BorrowingAutoMapper()));
-            services.AddAutoMapper(map => map.AddProfile(new FineAutoMapper()));
             return services;
         }
     }

@@ -10,9 +10,5 @@
         public int CategoryId { get; set; }
         public DateTime? PublicationDate { get; set; }
         public string? AdditionalDetails { get; set; }
-
-        // Navigation properties
-        public BookCategory? Category { get; set; }
-        public Author? Author { get; set; }
     }
 }
