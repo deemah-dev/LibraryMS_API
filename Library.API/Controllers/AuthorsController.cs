@@ -1,5 +1,6 @@
 ﻿using Library.BLL.Interfaces;
 using Library.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Controllers
@@ -17,7 +18,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPost("AddAuthor")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -40,7 +41,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPut("UpdateAuthor")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,7 +83,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetAuthorByName")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -101,7 +102,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetAuthor")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -125,7 +126,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetAllAuthors")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

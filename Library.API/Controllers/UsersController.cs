@@ -1,6 +1,9 @@
 ﻿using Library.BLL.Interfaces;
 using Library.Core.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Library.API.Controllers
 {
@@ -17,7 +20,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPost("AddUser")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -35,19 +38,19 @@ namespace Library.API.Controllers
             if (user.RoleId < 1)
                 return BadRequest(new { message = "Valid role ID is required." });
 
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             int newUserId = usersService.AddUser(user);
 
             if (newUserId == -1)
                 return Conflict(new { message = "Failed to create user. Username may already exist." });
 
             user.UserId = newUserId;
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             return Created(nameof(GetUser), new { message = "User created successfully.", data = user, userId = newUserId });
         }
 
         //_______________________________________________________________________________
         [HttpPut("UpdateUser")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -71,7 +74,7 @@ namespace Library.API.Controllers
             if (user is null)
                 return NotFound(new { message = "User not found.", userId });
 
-            user.PasswordHash =  BCrypt.Net.BCrypt.HashPassword(updatedUser.PasswordHash);
+            user.PasswordHash = updatedUser.PasswordHash;
             user.RoleId = updatedUser.RoleId;
 
             bool updatedSuccessfully = usersService.UpdateUser(user);
@@ -84,7 +87,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpDelete("{Id}", Name = "DeleteUser")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -103,7 +106,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetUser")]
-        //[Authorize(Roles ="Staff")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -122,7 +125,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetUserByUsername")]
-        //[Authorize(Roles ="Staff")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -141,7 +144,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetAllUsers")]
-        //[Authorize(Roles ="Staff")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

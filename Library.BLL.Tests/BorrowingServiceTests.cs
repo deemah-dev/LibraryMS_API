@@ -1,7 +1,12 @@
 using Library.BLL.Services;
+using Library.Core.Dtos.BorrowingBookDtos;
+using Library.Core.Dtos.BookCopyDtos;
+using Library.Core.Dtos.BorrowingBookDtos;
 using Library.Core.Models;
 using Library.DAL.Interfaces;
 using Moq;
+using AutoMapper;
+using Library.BLL.Interfaces;
 
 namespace Library.BLL.Tests
 {
@@ -11,24 +16,36 @@ namespace Library.BLL.Tests
         [Fact]
         public void BorrowBook_WhenCalled_ReturnsBorrowingRecordId()
         {
-            Mock<IBorrowingRepo> mockRepo = new();
+            var mockRepo = new Mock<IBorrowingRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockCopies = new Mock<IBooksCopiesService>();
+            var mockUsers = new Mock<IUsersService>();
 
-            BorrowingRecord borrowingRecord = new BorrowingRecord
+            BorrowBookDto borrowDto = new BorrowBookDto
+            {
+                UserId = 1,
+                CopyId = 1,
+                BorrowingDate = DateTime.Now
+            };
+
+            BorrowingRecord mapped = new BorrowingRecord
             {
                 BorrowUserId = 1,
                 CopyId = 1,
-                BorrowingDate = DateTime.Now,
+                BorrowingDate = borrowDto.BorrowingDate,
                 DueDate = DateTime.Now.AddDays(14)
             };
 
-            mockRepo.Setup(repo => repo.InsertBorrowingRecord(borrowingRecord)).Returns(1);
+            mockMapper.Setup(m => m.Map<BorrowingRecord>(It.IsAny<BorrowBookDto>())).Returns(mapped);
+            mockCopies.Setup(c => c.GetCopy(mapped.CopyId)).Returns(new ReadBookCopyDto { CopyId = 1, IsAvailable = true });
+            mockRepo.Setup(r => r.InsertBorrowingRecord(mapped)).Returns(1);
 
-            BorrowingService service = new(mockRepo.Object);
+            BorrowingService service = new(mockRepo.Object, mockMapper.Object, mockCopies.Object, mockUsers.Object);
 
-            var result = service.BorrowBook(borrowingRecord);
+            var result = service.BorrowBook(borrowDto);
 
             Assert.Equal(1, result);
-            mockRepo.Verify(repo => repo.InsertBorrowingRecord(borrowingRecord), Times.Once);
+            mockRepo.Verify(repo => repo.InsertBorrowingRecord(mapped), Times.Once);
         }
 
 
@@ -36,33 +53,45 @@ namespace Library.BLL.Tests
         [Fact]
         public void ReturnBook_WhenCalled_ReturnsTrue()
         {
-            Mock<IBorrowingRepo> mockRepo = new();
+            var mockRepo = new Mock<IBorrowingRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockCopies = new Mock<IBooksCopiesService>();
+            var mockUsers = new Mock<IUsersService>();
 
-            DateTime actualReturnDate = DateTime.Now;
-            mockRepo.Setup(repo => repo.ReturnBook(1, 1, actualReturnDate)).Returns(true);
+            var returnDto = new ReturnBookDto { BorrowingRecordId = 1, UserId = 1, ActualReturnDate = DateTime.Now };
+            var mapped = new BorrowingRecord { BorrowingRecordId = 1, BorrowUserId = 1, ActualReturnDate = returnDto.ActualReturnDate };
 
-            BorrowingService service = new(mockRepo.Object);
+            mockMapper.Setup(m => m.Map<BorrowingRecord>(It.IsAny<ReturnBookDto>())).Returns(mapped);
+            mockRepo.Setup(r => r.ReturnBook(mapped)).Returns(true);
 
-            var result = service.ReturnBook(1, 1, actualReturnDate);
+            BorrowingService service = new(mockRepo.Object, mockMapper.Object, mockCopies.Object, mockUsers.Object);
+
+            var result = service.ReturnBook(returnDto);
 
             Assert.True(result);
-            mockRepo.Verify(repo => repo.ReturnBook(1, 1, actualReturnDate), Times.Once);
+            mockRepo.Verify(repo => repo.ReturnBook(mapped), Times.Once);
         }
 
         [Fact]
         public void ReturnBook_WhenFailed_ReturnsFalse()
         {
-            Mock<IBorrowingRepo> mockRepo = new();
+            var mockRepo = new Mock<IBorrowingRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockCopies = new Mock<IBooksCopiesService>();
+            var mockUsers = new Mock<IUsersService>();
 
-            DateTime actualReturnDate = DateTime.Now;
-            mockRepo.Setup(repo => repo.ReturnBook(999, 1, actualReturnDate)).Returns(false);
+            var returnDto = new ReturnBookDto { BorrowingRecordId = 999, UserId = 1, ActualReturnDate = DateTime.Now };
+            var mapped = new BorrowingRecord { BorrowingRecordId = 999, BorrowUserId = 1, ActualReturnDate = returnDto.ActualReturnDate };
 
-            BorrowingService service = new(mockRepo.Object);
+            mockMapper.Setup(m => m.Map<BorrowingRecord>(It.IsAny<ReturnBookDto>())).Returns(mapped);
+            mockRepo.Setup(r => r.ReturnBook(mapped)).Returns(false);
 
-            var result = service.ReturnBook(999, 1, actualReturnDate);
+            BorrowingService service = new(mockRepo.Object, mockMapper.Object, mockCopies.Object, mockUsers.Object);
+
+            var result = service.ReturnBook(returnDto);
 
             Assert.False(result);
-            mockRepo.Verify(repo => repo.ReturnBook(999, 1, actualReturnDate), Times.Once);
+            mockRepo.Verify(repo => repo.ReturnBook(mapped), Times.Once);
         }
 
 
@@ -70,32 +99,38 @@ namespace Library.BLL.Tests
         [Fact]
         public void HasLateFine_WhenFineExists_ReturnsFine()
         {
-            Mock<IBorrowingRepo> mockRepo = new();
+            var mockRepo = new Mock<IBorrowingRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockCopies = new Mock<IBooksCopiesService>();
+            var mockUsers = new Mock<IUsersService>();
 
             DateTime actualReturnDate = DateTime.Now.AddDays(5);
-            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(25);
+            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(25m);
 
-            BorrowingService service = new(mockRepo.Object);
+            BorrowingService service = new(mockRepo.Object, mockMapper.Object, mockCopies.Object, mockUsers.Object);
 
             var result = service.HasLateFine(1, actualReturnDate);
 
-            Assert.Equal(25, result);
+            Assert.Equal(25m, result);
             mockRepo.Verify(repo => repo.CheckBorrowFine(1, actualReturnDate), Times.Once);
         }
 
         [Fact]
         public void HasLateFine_WhenNoFine_ReturnsNegativeOne()
         {
-            Mock<IBorrowingRepo> mockRepo = new();
+            var mockRepo = new Mock<IBorrowingRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockCopies = new Mock<IBooksCopiesService>();
+            var mockUsers = new Mock<IUsersService>();
 
             DateTime actualReturnDate = DateTime.Now;
-            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(-1);
+            mockRepo.Setup(repo => repo.CheckBorrowFine(1, actualReturnDate)).Returns(-1m);
 
-            BorrowingService service = new(mockRepo.Object);
+            BorrowingService service = new(mockRepo.Object, mockMapper.Object, mockCopies.Object, mockUsers.Object);
 
             var result = service.HasLateFine(1, actualReturnDate);
 
-            Assert.Equal(-1, result);
+            Assert.Equal(-1m, result);
             mockRepo.Verify(repo => repo.CheckBorrowFine(1, actualReturnDate), Times.Once);
         }
 
@@ -104,7 +139,10 @@ namespace Library.BLL.Tests
         [Fact]
         public void GetAllBorrowingRecords_WhenCalled_ReturnsListOfRecords()
         {
-            Mock<IBorrowingRepo> mockRepo = new();
+            var mockRepo = new Mock<IBorrowingRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockCopies = new Mock<IBooksCopiesService>();
+            var mockUsers = new Mock<IUsersService>();
 
             List<BorrowingRecord> records = new()
             {
@@ -135,9 +173,17 @@ namespace Library.BLL.Tests
                 }
             };
 
-            mockRepo.Setup(repo => repo.GetBorrowingRecords()).Returns(records);
+            var dtoList = new List<Core.Dtos.BorrowingBookDtos.ReadBorrowingRecordDto>
+            {
+                new Core.Dtos.BorrowingBookDtos.ReadBorrowingRecordDto { BorrowingRecordId = 1 },
+                new Core.Dtos.BorrowingBookDtos.ReadBorrowingRecordDto { BorrowingRecordId = 2 },
+                new Core.Dtos.BorrowingBookDtos.ReadBorrowingRecordDto { BorrowingRecordId = 3 }
+            };
 
-            BorrowingService service = new(mockRepo.Object);
+            mockRepo.Setup(repo => repo.GetBorrowingRecords()).Returns(records);
+            mockMapper.Setup(m => m.Map<IEnumerable<Core.Dtos.BorrowingBookDtos.ReadBorrowingRecordDto>>(It.IsAny<IEnumerable<BorrowingRecord>>())).Returns(dtoList);
+
+            BorrowingService service = new(mockRepo.Object, mockMapper.Object, mockCopies.Object, mockUsers.Object);
 
             var result = service.GetAllBorrowingRecords();
 
@@ -150,11 +196,15 @@ namespace Library.BLL.Tests
         [Fact]
         public void GetAllBorrowingRecords_WhenNoRecordsExist_ReturnsNull()
         {
-            Mock<IBorrowingRepo> mockRepo = new();
+            var mockRepo = new Mock<IBorrowingRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockCopies = new Mock<IBooksCopiesService>();
+            var mockUsers = new Mock<IUsersService>();
 
             mockRepo.Setup(repo => repo.GetBorrowingRecords()).Returns((IEnumerable<BorrowingRecord>?)null);
+            mockMapper.Setup(m => m.Map<IEnumerable<Core.Dtos.BorrowingBookDtos.ReadBorrowingRecordDto>>(It.IsAny<IEnumerable<BorrowingRecord>>())).Returns((IEnumerable<Core.Dtos.BorrowingBookDtos.ReadBorrowingRecordDto>?)null);
 
-            BorrowingService service = new(mockRepo.Object);
+            BorrowingService service = new(mockRepo.Object, mockMapper.Object, mockCopies.Object, mockUsers.Object);
 
             var result = service.GetAllBorrowingRecords();
 

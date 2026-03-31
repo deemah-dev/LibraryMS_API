@@ -1,6 +1,7 @@
 ﻿using Library.BLL.Interfaces;
 using Library.Core.Dtos.BorrowingBookDtos;
 using Library.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPost("BorrowBook")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -47,7 +48,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPut("ReturnBook")]
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -73,7 +74,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("CheckLateFine")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult CheckLateFine(int borrowingRecordId, DateTime actualReturnDate)
@@ -94,7 +95,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetBorrowingRecord")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -113,7 +114,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetAllBorrowingRecords")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

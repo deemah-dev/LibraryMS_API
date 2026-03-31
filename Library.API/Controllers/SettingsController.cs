@@ -1,5 +1,6 @@
 ﻿using Library.BLL.Interfaces;
 using Library.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Controllers
@@ -17,7 +18,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetSettings")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Settings> GetSettings()
@@ -32,7 +33,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPut("UpdateDefaultBorrowDays")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -54,7 +55,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPut("UpdateDefaultFinePerDay")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -76,7 +77,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPut("UpdateSettings")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]

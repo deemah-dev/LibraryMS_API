@@ -1,6 +1,7 @@
 ﻿using Library.BLL.Interfaces;
 using Library.Core.Dtos.BookDtos;
 using Library.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPost("AddBook")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -42,13 +43,13 @@ namespace Library.API.Controllers
             if (newBookId == -1)
                 return Conflict(new { message = "Failed to create book. Please try again." });
 
-            book.BookId = newBookId;
-            return Created(nameof(GetBook), new { message = "Book created successfully.", data = book, bookId = newBookId });
+            var created = booksService.GetBook(newBookId);
+            return Created(nameof(GetBook), new { message = "Book created successfully.", data = created, bookId = newBookId });
         }
 
         //_______________________________________________________________________________
         [HttpPut("UpdateBook")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,22 +65,21 @@ namespace Library.API.Controllers
             if (string.IsNullOrWhiteSpace(updatedBook.Title))
                 return BadRequest(new { message = "Book title is required." });
 
-            ReadBookDto? book = booksService.GetBook(bookId);
-
-            if (book is null)
+            var existing = booksService.GetBook(bookId);
+            if (existing is null)
                 return NotFound(new { message = "Book not found.", bookId });
 
             bool updatedSuccessfully = booksService.UpdateBook(bookId, updatedBook);
 
             if (updatedSuccessfully)
-                return Ok(new { message = "Book updated successfully.", data = book, bookId });
+                return Ok(new { message = "Book updated successfully.", data = booksService.GetBook(bookId), bookId });
             else
                 return Conflict(new { message = "Failed to update book. Please try again." });
         }
 
         //_______________________________________________________________________________
         [HttpDelete("{Id}", Name = "DeleteBook")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -98,7 +98,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetBook")]
-        //[Authorize(Roles ="Staff")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -117,7 +117,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetAllBooks")]
-        //[Authorize(Roles ="Staff")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -131,8 +131,7 @@ namespace Library.API.Controllers
             if (books.Count() == 0)
                 return NoContent();
 
-            return Ok(new { message = "Books retrieved successfully.",
-                data = books, count = books.Count() });
+            return Ok(new { message = "Books retrieved successfully.", data = books, count = books.Count() });
         }
     }
 }

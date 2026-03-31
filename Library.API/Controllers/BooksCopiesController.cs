@@ -1,6 +1,7 @@
 ﻿using Library.BLL.Interfaces;
 using Library.Core.Dtos.BookCopyDtos;
 using Library.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpPost("AddBookCopy")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -36,13 +37,13 @@ namespace Library.API.Controllers
             if (newCopyId == -1)
                 return Conflict(new { message = "Failed to create book copy. Please try again." });
 
-            bookCopy.CopyId = newCopyId;
-            return Created(nameof(GetBookCopy), new { message = "Book copy created successfully.", data = bookCopy, copyId = newCopyId });
+            var created = copiesService.GetCopy(newCopyId);
+            return Created(nameof(GetBookCopy), new { message = "Book copy created successfully.", data = created, copyId = newCopyId });
         }
 
         //_______________________________________________________________________________
         [HttpDelete("{Id}", Name = "DeleteBookCopy")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -61,7 +62,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetBookCopy")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -69,7 +70,6 @@ namespace Library.API.Controllers
         {
             if (copyId < 1)
                 return BadRequest(new { message = "Invalid copy ID. ID must be greater than 0." });
-
 
             ReadBookCopyDto? copy = copiesService.GetCopy(copyId);
 
@@ -81,11 +81,11 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpGet("GetCopyByBook")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult GetCopyIdByBookId(int bookId)
+        public ActionResult GetCopyByBook(int bookId)
         {
             if (bookId < 1)
                 return BadRequest(new { message = "Invalid book ID. ID must be greater than 0." });
@@ -93,14 +93,14 @@ namespace Library.API.Controllers
             int? copyId = copiesService.GetCopyIdByBookId(bookId);
 
             if (copyId is null)
-                return NotFound(new { message = "No available copies found for this book.", bookId });
+                return NotFound(new { message = "No copies found for this book.", bookId });
 
             return Ok(new { message = "Book copy ID retrieved successfully.", copyId, bookId });
         }
 
         //_______________________________________________________________________________
         [HttpGet("GetAllBookCopies")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

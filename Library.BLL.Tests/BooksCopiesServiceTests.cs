@@ -1,7 +1,10 @@
 using Library.BLL.Services;
+using Library.Core.Dtos.BookCopyDtos;
 using Library.Core.Models;
 using Library.DAL.Interfaces;
 using Moq;
+using AutoMapper;
+using Library.BLL.Interfaces;
 
 namespace Library.BLL.Tests
 {
@@ -11,22 +14,22 @@ namespace Library.BLL.Tests
         [Fact]
         public void AddCopy_WhenCalled_ReturnsCopyId()
         {
-            Mock<IBooksCopiesRepo> mockRepo = new();
+            var mockRepo = new Mock<IBooksCopiesRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockBooks = new Mock<IBooksService>();
 
-            BookCopy copy = new BookCopy
-            {
-                BookId = 1,
-                IsAvailable = true
-            };
+            AddBookCopyDto addDto = new AddBookCopyDto { BookId = 1 };
+            BookCopy mapped = new BookCopy { BookId = 1 };
 
-            mockRepo.Setup(repo => repo.InsertBookCopy(copy)).Returns(1);
+            mockMapper.Setup(m => m.Map<BookCopy>(It.IsAny<AddBookCopyDto>())).Returns(mapped);
+            mockRepo.Setup(r => r.InsertBookCopy(mapped)).Returns(1);
 
-            BooksCopiesService service = new(mockRepo.Object);
+            BooksCopiesService service = new(mockRepo.Object, mockMapper.Object, mockBooks.Object);
 
-            var result = service.AddCopy(copy);
+            var result = service.AddCopy(addDto);
 
             Assert.Equal(1, result);
-            mockRepo.Verify(repo => repo.InsertBookCopy(copy), Times.Once);
+            mockRepo.Verify(repo => repo.InsertBookCopy(mapped), Times.Once);
         }
 
 
@@ -34,11 +37,13 @@ namespace Library.BLL.Tests
         [Fact]
         public void RemoveCopy_WhenCalled_ReturnsTrue()
         {
-            Mock<IBooksCopiesRepo> mockRepo = new();
+            var mockRepo = new Mock<IBooksCopiesRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockBooks = new Mock<IBooksService>();
 
             mockRepo.Setup(repo => repo.DeleteBookCopy(1)).Returns(true);
 
-            BooksCopiesService service = new(mockRepo.Object);
+            BooksCopiesService service = new(mockRepo.Object, mockMapper.Object, mockBooks.Object);
 
             var result = service.RemoveCopy(1);
 
@@ -51,11 +56,13 @@ namespace Library.BLL.Tests
         [Fact]
         public void GetCopyIdByBook_WhenCopyExists_ReturnsCopyId()
         {
-            Mock<IBooksCopiesRepo> mockRepo = new();
+            var mockRepo = new Mock<IBooksCopiesRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockBooks = new Mock<IBooksService>();
 
             mockRepo.Setup(repo => repo.GetBookCopyId(1)).Returns(1);
 
-            BooksCopiesService service = new(mockRepo.Object);
+            BooksCopiesService service = new(mockRepo.Object, mockMapper.Object, mockBooks.Object);
 
             var result = service.GetCopyIdByBookId(1);
 
@@ -67,11 +74,13 @@ namespace Library.BLL.Tests
         [Fact]
         public void GetCopyIdByBook_WhenCopyDoesNotExist_ReturnsNull()
         {
-            Mock<IBooksCopiesRepo> mockRepo = new();
+            var mockRepo = new Mock<IBooksCopiesRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockBooks = new Mock<IBooksService>();
 
             mockRepo.Setup(repo => repo.GetBookCopyId(999)).Returns((int?)null);
 
-            BooksCopiesService service = new(mockRepo.Object);
+            BooksCopiesService service = new(mockRepo.Object, mockMapper.Object, mockBooks.Object);
 
             var result = service.GetCopyIdByBookId(999);
 
@@ -84,7 +93,9 @@ namespace Library.BLL.Tests
         [Fact]
         public void GetAllCopies_WhenCalled_ReturnsListOfCopies()
         {
-            Mock<IBooksCopiesRepo> mockRepo = new();
+            var mockRepo = new Mock<IBooksCopiesRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockBooks = new Mock<IBooksService>();
 
             List<BookCopy> copies = new()
             {
@@ -93,9 +104,17 @@ namespace Library.BLL.Tests
                 new BookCopy { CopyId = 3, BookId = 2, IsAvailable = true }
             };
 
-            mockRepo.Setup(repo => repo.GetBookCopies()).Returns(copies);
+            var dtoList = new List<ReadBookCopyDto>
+            {
+                new ReadBookCopyDto { CopyId = 1, IsAvailable = true },
+                new ReadBookCopyDto { CopyId = 2, IsAvailable = false },
+                new ReadBookCopyDto { CopyId = 3, IsAvailable = true }
+            };
 
-            BooksCopiesService service = new(mockRepo.Object);
+            mockRepo.Setup(repo => repo.GetBookCopies()).Returns(copies);
+            mockMapper.Setup(m => m.Map<IEnumerable<ReadBookCopyDto>>(It.IsAny<IEnumerable<BookCopy>>())).Returns(dtoList);
+
+            BooksCopiesService service = new(mockRepo.Object, mockMapper.Object, mockBooks.Object);
 
             var result = service.GetAllCopies();
 
@@ -108,11 +127,14 @@ namespace Library.BLL.Tests
         [Fact]
         public void GetAllCopies_WhenNoCopiesExist_ReturnsNull()
         {
-            Mock<IBooksCopiesRepo> mockRepo = new();
+            var mockRepo = new Mock<IBooksCopiesRepo>();
+            var mockMapper = new Mock<IMapper>();
+            var mockBooks = new Mock<IBooksService>();
 
             mockRepo.Setup(repo => repo.GetBookCopies()).Returns((IEnumerable<BookCopy>?)null);
+            mockMapper.Setup(m => m.Map<IEnumerable<ReadBookCopyDto>>(It.IsAny<IEnumerable<BookCopy>>())).Returns((IEnumerable<ReadBookCopyDto>?)null);
 
-            BooksCopiesService service = new(mockRepo.Object);
+            BooksCopiesService service = new(mockRepo.Object, mockMapper.Object, mockBooks.Object);
 
             var result = service.GetAllCopies();
 

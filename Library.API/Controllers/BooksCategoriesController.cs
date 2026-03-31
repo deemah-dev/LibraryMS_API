@@ -1,5 +1,6 @@
 ﻿using Library.BLL.Interfaces;
 using Library.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Controllers
@@ -17,7 +18,7 @@ namespace Library.API.Controllers
 
         //_______________________________________________________________________________
         [HttpDelete("{Id}", Name = "DeleteBookCategory")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -35,7 +36,7 @@ namespace Library.API.Controllers
         //_______________________________________________________________________________
 
         [HttpGet("GetAllCategories")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -53,7 +54,7 @@ namespace Library.API.Controllers
         //__________________________________________________________________________________
 
         [HttpGet("GetBookCategoryById")]
-        //[Authorize(Roles ="User")]
+        [Authorize(Roles = "Staff,Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -73,7 +74,7 @@ namespace Library.API.Controllers
 
         //__________________________________________________________________________________
         [HttpPost("AddBookCategory")]
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -101,7 +102,7 @@ namespace Library.API.Controllers
         //____________________________________________________________________________________
 
         [HttpPut("UpdateBookCategory")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
