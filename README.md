@@ -528,12 +528,6 @@ GitHub: [@deemah-dev](https://github.com/deemah-dev)
 
 ---
 
-## 📞 Support & Contact
-
-For issues, questions, or suggestions, please open an issue on the [GitHub repository](https://github.com/deemah-dev/LibraryMS_API/issues).
-
----
-
 **Last Updated:** January 2024  
 **Version:** 1.0.0  
 **Status:** ✅ Production Ready
