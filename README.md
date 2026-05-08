@@ -1,6 +1,6 @@
 # Library Management System API
 
-A comprehensive **RESTful API** for managing library operations built with **.NET 8** using a clean 3-layer architecture pattern.
+A comprehensive **RESTful API** for managing library operations built with **.NET 8** using a clean n-layer architecture pattern.
 
 ## 🎯 Project Overview
 
@@ -121,7 +121,6 @@ LibraryMS_API/
 ### **Core Framework**
 - **.NET 8** - Latest long-term support framework
 - **ASP.NET Core 8** - Web API framework
-- **Entity Framework Core** - ORM (for future implementation)
 
 ### **Authentication & Security**
 - **JWT (JSON Web Tokens)** - Bearer token authentication
@@ -242,64 +241,7 @@ PUT    /api/Settings/UpdateSettings                 - Update multiple settings [
 
 ---
 
-## 🚀 Getting Started
-
-### **Prerequisites**
-- .NET 8 SDK or later
-- SQL Server 2019 or later
-- Visual Studio 2022 or VS Code
-- Git
-
-### **Installation**
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/deemah-dev/LibraryMS_API.git
-cd LibraryMS_API
-```
-
-2. **Install dependencies**
-```bash
-dotnet restore
-```
-
-3. **Configure database connection**
-- Update connection string in `appsettings.json`:
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER;Database=LibraryDB;Trusted_Connection=true;"
-  },
-  "JWT_SECRET_KEY": "your-secret-key-min-32-characters"
-}
-```
-
-4. **Run the application**
-```bash
-cd Library.API
-dotnet run
-```
-
-5. **Access the API**
-- Swagger UI: `https://localhost:5001/swagger`
-- API Base: `https://localhost:5001/api`
-
----
-
 ## 🧪 Unit Testing
-
-### **Running Tests**
-
-```bash
-# Run all tests
-dotnet test
-
-# Run specific test project
-dotnet test Library.BLL.Tests
-
-# Run with coverage
-dotnet test /p:CollectCoverage=true
-```
 
 ### **Test Coverage**
 
@@ -453,7 +395,7 @@ builder.Services.AddAutoMapper();        // AutoMapper profiles
 
 ## 🌟 Striking Points & Best Practices
 
-### **✅ Clean Architecture**
+### **✅ Architecture**
 - Clear separation of concerns (API, BLL, DAL)
 - Loose coupling between layers
 - Dependency Injection throughout
@@ -493,41 +435,3 @@ builder.Services.AddAutoMapper();        // AutoMapper profiles
 - Auto-generated API documentation
 - Interactive testing interface
 - Clear endpoint descriptions
-
----
-
-## 📚 Additional Resources
-
-- [Microsoft .NET 8 Documentation](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8)
-- [ASP.NET Core Best Practices](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/best-practices)
-- [JWT Authentication](https://jwt.io)
-- [AutoMapper Documentation](https://automapper.org/)
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## 👤 Author
-
-**Deemah Dev**  
-GitHub: [@deemah-dev](https://github.com/deemah-dev)
-
----
-
-**Last Updated:** January 2024  
-**Version:** 1.0.0  
-**Status:** ✅ Production Ready
